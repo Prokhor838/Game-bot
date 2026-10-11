@@ -171,13 +171,16 @@ const CS2=[
 {n:'КЕЙС «АБСОЛЮТ»',cost:10000,c1:'#f5c542',c2:'#111111',o:[{t:'c',a:5000,b:8000,r:0,p:300},{t:'c',a:8000,b:14000,r:1,p:200},{t:'c',a:14000,b:20000,r:2,p:40},{t:'k',a:10,b:30,r:2,pool:[2,3,4,5,6],p:250},{t:'i',id:16,p:208},{t:'i',id:17,p:2}]},
 {gem:1,n:'Кристальный кейс',cost:15,c1:'#34d399',c2:'#0ea5e9',o:[{t:'c',a:100,b:250,r:0,p:550},{t:'c',a:250,b:500,r:1,p:250},{t:'k',a:3,b:8,r:1,pool:[0,1,2,3],p:100},{t:'i',id:10,p:80},{t:'i',id:11,p:20}]},
 {gem:1,n:'Звёздный кейс',cost:40,c1:'#f472b6',c2:'#6366f1',o:[{t:'c',a:150,b:400,r:0,p:532},{t:'c',a:400,b:900,r:1,p:250},{t:'k',a:6,b:14,r:2,pool:[1,2,3,4],p:120},{t:'i',id:11,p:60},{t:'i',id:12,p:28},{t:'i',id:13,p:10}]},
-{mad:1,cls:'crush',T:10000,n:'💀 Кейс Крушителя',cost:45000,c1:'#ff1a2e',c2:'#1a0003',o:[{t:'c',a:6000,b:12000,r:1,p:4500},{t:'c',a:12000,b:24000,r:2,p:2300},{t:'k',a:20,b:50,r:2,pool:[3,4,5,6],p:700},{t:'i',id:22,p:1000},{t:'i',id:23,p:500},{t:'i',id:24,p:400},{t:'i',id:25,p:100},{t:'i',id:26,p:500}]},
-{mad:1,cls:'devil',T:10000,n:'😈 Кейс Дьявола',cost:25000,c1:'#ff4500',c2:'#3a0000',o:[{t:'c',a:5000,b:12000,r:1,p:5300},{t:'c',a:12000,b:24000,r:2,p:2000},{t:'k',a:30,b:60,r:3,pool:[4,5,6,7],p:600},{t:'i',id:27,p:900},{t:'i',id:28,p:350},{t:'i',id:29,p:250},{t:'i',id:30,p:100},{t:'i',id:31,p:500}]}];
+{mad:1,cls:'devil',T:10000,n:'😈 Кейс Дьявола',cost:25000,c1:'#ff4500',c2:'#3a0000',o:[{t:'c',a:5000,b:12000,r:1,p:5300},{t:'c',a:12000,b:24000,r:2,p:2000},{t:'k',a:30,b:60,r:3,pool:[4,5,6,7],p:600},{t:'i',id:27,p:900},{t:'i',id:28,p:350},{t:'i',id:29,p:250},{t:'i',id:30,p:100},{t:'i',id:31,p:500}]},
+{mad:1,cls:'crush',T:10000,n:'💀 Кейс Крушителя',cost:45000,c1:'#ff1a2e',c2:'#1a0003',o:[{t:'c',a:6000,b:12000,r:1,p:4500},{t:'c',a:12000,b:24000,r:2,p:2300},{t:'k',a:20,b:50,r:2,pool:[3,4,5,6],p:700},{t:'i',id:22,p:1000},{t:'i',id:23,p:500},{t:'i',id:24,p:400},{t:'i',id:25,p:100},{t:'i',id:26,p:500}]}];
 const pc=(p,c)=>+(p*100/((c&&c.T)||1000)).toFixed(2),olb=o=>o.t=='c'?'🪙 '+o.a+'–'+o.b+' монет':o.t=='k'?'💎 '+o.a+'–'+o.b+' кристаллов':ITEMS[o.id][5]+' '+ITEMS[o.id][0];
 function uicon(i){const c=ITEMS[i][4];return`<svg viewBox="0 0 40 40"><defs><radialGradient id="u${i}"><stop offset="0" stop-color="${c}" stop-opacity=".85"/><stop offset="1" stop-color="${c}" stop-opacity=".12"/></radialGradient></defs><circle cx="20" cy="20" r="18" fill="url(#u${i})" stroke="${c}" stroke-width="1.5"/><text x="20" y="27" text-anchor="middle" font-size="19">${ITEMS[i][5]}</text></svg>`}
 const cart=(j,o)=>{const c=CS2[j];return`<svg viewBox="0 0 120 100" style="width:120px;filter:drop-shadow(0 0 14px ${c.c1})"><defs><linearGradient id="cg${j}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs><rect x="14" y="40" width="92" height="52" rx="8" fill="url(#cg${j})" stroke="#fff" stroke-opacity=".5"/>${o?'<ellipse cx="60" cy="40" rx="40" ry="10" fill="#fff" opacity=".75"/>':''}<g transform="${o?'translate(-6,-16) rotate(-14 14 40)':''}"><rect x="10" y="26" width="100" height="18" rx="6" fill="url(#cg${j})" stroke="#fff" stroke-opacity=".6"/></g><rect x="52" y="52" width="16" height="20" rx="3" fill="#fff" opacity=".85"/></svg>`};
 const K={
 tile(t){return`<div class="tl2${t.r==5?' mad':''}" style="--rc:${RC[t.r]}">${t.id!=null?icon(t.id):`<div class=em>${t.ic}</div>`}<span>${t.nm}</span></div>`},
+claim(){const rw=S.pend;if(!rw)return false;S.pend=null;
+if(rw.t=='c')E.add(rw.n);else{if(rw.t=='k'){for(const id in rw.m)S.col[id]=(S.col[id]||0)+rw.m[id]}else S.col[rw.id]=(S.col[rw.id]||0)+1;save()}
+S.st.cases++;save();rec(0);return true},
 tileOf(rw){return rw.t=='c'?{ic:'🪙',nm:rw.n+' монет',r:rw.r}:rw.t=='k'?{ic:'💎',nm:'+'+rw.n+' кристаллов',r:rw.r}:{id:rw.id,nm:ITEMS[rw.id][0],r:ITEMS[rw.id][2]}},
 fake(j){const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 if(j>=100){const c=CS[j-100];let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),id=p[Math.random()*p.length|0];return{id,nm:ITEMS[id][0],r:q}}
@@ -185,8 +188,8 @@ const c=CS2[j];let r=Math.random()*(c.T||1000),o=c.o[c.o.length-1],q=0;for(const
 return o.t=='c'?{ic:'🪙',nm:ri(o.a,o.b)+' монет',r:o.r}:o.t=='k'?{ic:'💎',nm:'+'+ri(o.a,o.b)+' кристаллов',r:o.r}:{id:o.id,nm:ITEMS[o.id][0],r:ITEMS[o.id][2]}},
 // Рулетка в стиле CS2: награда уже выдана и записана, лента только показывает её (победная плитка строится из фактической награды)
 go(rw,name,fk,again){const win=34+Math.floor(Math.random()*5),tiles=[];for(let i=0;i<44;i++)tiles.push(i==win?K.tileOf(rw):fk());
-const g=G;Object.assign(g,{ph:'roll',tiles,win,jit:Math.random()*50-25,an:0,dur:S.anim?5200:500,cn:name,again,rw});render();
-setTimeout(()=>{busy=false;if(game=='cases'&&G===g){g.ph='res';render()}else toast('Награда: '+K.tileOf(rw).nm)},g.dur+500)},
+S.pend=rw;save();const g=G;Object.assign(g,{ph:'roll',tiles,win,jit:Math.random()*50-25,an:0,dur:S.anim?5200:500,cn:name,again,rw});render();
+setTimeout(()=>{K.claim();busy=false;if(game=='cases'&&G===g){g.ph='res';render()}else toast('Награда получена: '+K.tileOf(rw).nm)},g.dur+500)},
 mount(){const st=$('#st2');if(!st||G.ph!='roll')return;const box=st.parentElement.clientWidth||320,tx=-(G.win*98+49-box/2+G.jit);
 if(G.an){st.style.animation='none';st.style.transition='none';st.style.transform='translateX('+tx+'px)';return}G.an=1;st.style.transform='translateX(0)';
 requestAnimationFrame(()=>requestAnimationFrame(()=>{st.style.transition='transform '+G.dur+'ms cubic-bezier(.08,.72,.12,1)';st.style.transform='translateX('+tx+'px)'}))},
@@ -197,16 +200,16 @@ else h=`<div style="width:120px;margin:auto">${icon(r.id)}</div><div class=big s
 return`<div class="card${r.r==5?' madz':''}" style="text-align:center;border:2px solid ${col};box-shadow:0 0 ${g}px ${col},0 0 ${g*3}px ${col}55;animation:${r.r==5?'rv .7s,madp 1.6s ease-in-out .7s infinite alternate':'rv .7s'};${r.r==5?'background-image:radial-gradient(circle at 50% 25%,rgba(255,26,46,.4),transparent 65%)':''}"><div style="color:${col};font-weight:900;letter-spacing:1px">${RAR[r.r].toUpperCase()}</div>${h}<br><button class=btn onclick="G.again()">Открыть ещё раз</button><br><br><button class="btn g" onclick="G.ph=null;render()">К кейсам</button></div>`},
 v2(){return`<h2>Новые кейсы</h2>`+CS2.map((c,j)=>c.gem||c.mad?'':`<div class=ct style="background:linear-gradient(140deg,${c.c1}cc,${c.c2})"><div class=rw><div style="flex:none">${cart(j,0)}</div><div><b style="font-size:19px">${c.n}</b><div style="font-size:15px">Стоимость: <b>${c.cost}</b> монет</div></div></div><div class=od>${c.o.map(o=>`<div><span>${olb(o)}</span><b>${pc(o.p,c)}%</b></div>`).join('')}</div><button class=btn ${busy?'disabled':''} onclick="K.open2(${j})" style="background:rgba(0,0,0,.45);box-shadow:none;border:1px solid rgba(255,255,255,.4)">Открыть за ${c.cost}</button></div>`).join('')},
 v3(){return`<h2 style="color:#ff1a2e;text-shadow:0 0 12px #ff1a2e">Безумные кейсы</h2>`+CS2.map((c,j)=>!c.mad?'':`<div class="ct ${c.cls}"><div class=rw><div style="flex:none">${cart(j,0)}</div><div><b style="font-size:20px">${c.n}</b><div style="font-size:15px">Стоимость: <b>${c.cost}</b> монет</div></div></div><div class=od>${c.o.map(o=>`<div><span${o.t=='i'?` style="color:${RC[ITEMS[o.id][2]]};font-weight:${ITEMS[o.id][2]>=4?800:500}"`:''}>${olb(o)}${o.t=='i'&&ITEMS[o.id][2]==5?' · БЕЗУМНЫЙ':''}</span><b>${pc(o.p,c)}%</b></div>`).join('')}</div><button class=btn ${busy?'disabled':''} onclick="K.open2(${j})" style="background:linear-gradient(135deg,#ff1a2e,#6b0010);box-shadow:0 0 18px rgba(255,26,46,.6);border:1px solid rgba(255,255,255,.35)">Открыть за ${c.cost}</button></div>`).join('')},
-open2(j){if(busy)return;const c=CS2[j];if(!c||c.o.reduce((a,x)=>a+x.p,0)!==(c.T||1000)){toast('Ошибка таблицы наград');return}if(c.gem){if(gems()<c.cost){toast('Недостаточно кристаллов: нужно '+c.cost+', у вас '+gems());return}busy=true;if(!gemPay(c.cost)){busy=false;return}}else{if(S.coins<c.cost){toast('Недостаточно монет: нужно '+c.cost);return}busy=true;if(!E.spend(c.cost)){busy=false;return}}
+open2(j){if(busy||S.pend){if(S.pend)toast('Дождитесь окончания открытия');return}const c=CS2[j];if(!c||c.o.reduce((a,x)=>a+x.p,0)!==(c.T||1000)){toast('Ошибка таблицы наград');return}if(c.gem){if(gems()<c.cost){toast('Недостаточно кристаллов: нужно '+c.cost+', у вас '+gems());return}busy=true;if(!gemPay(c.cost)){busy=false;return}}else{if(S.coins<c.cost){toast('Недостаточно монет: нужно '+c.cost);return}busy=true;if(!E.spend(c.cost)){busy=false;return}}
 const r=Math.random()*(c.T||1000);let q=0,o=c.o[c.o.length-1];for(const x of c.o){if(r<q+x.p){o=x;break}q+=x.p}
 let rw={t:o.t,r:o.r};
-if(o.t=='c'){rw.n=o.a+Math.floor(Math.random()*(o.b-o.a+1));E.add(rw.n)}
-else if(o.t=='k'){const n=o.a+Math.floor(Math.random()*(o.b-o.a+1)),m={};for(let i=0;i<n;i++){const id=o.pool[Math.random()*o.pool.length|0];m[id]=(m[id]||0)+1;S.col[id]=(S.col[id]||0)+1}rw.m=m;rw.n=n}
-else{S.col[o.id]=(S.col[o.id]||0)+1;rw.id=o.id;rw.r=ITEMS[o.id][2]}
-S.st.cases++;save();rec(0);K.go(rw,c.n,()=>K.fake(j),()=>K.open2(j))},
+if(o.t=='c'){rw.n=o.a+Math.floor(Math.random()*(o.b-o.a+1))}
+else if(o.t=='k'){const n=o.a+Math.floor(Math.random()*(o.b-o.a+1)),m={};for(let i=0;i<n;i++){const id=o.pool[Math.random()*o.pool.length|0];m[id]=(m[id]||0)+1}rw.m=m;rw.n=n}
+else{rw.id=o.id;rw.r=ITEMS[o.id][2]}
+K.go(rw,c.n,()=>K.fake(j),()=>K.open2(j))},
 init(){G={ph:null}},
-open(i){if(busy)return;const c=CS[i];if(!E.spend(c[1]))return;busy=true;let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;
-const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),it=p[Math.random()*p.length|0];S.col[it]=(S.col[it]||0)+1;S.st.cases++;save();rec(0);
+open(i){if(busy||S.pend){if(S.pend)toast('Дождитесь окончания открытия');return}const c=CS[i];if(!E.spend(c[1]))return;busy=true;let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;
+const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),it=p[Math.random()*p.length|0];
 K.go({t:'i',id:it,r:ITEMS[it][2]},'Кейс «'+c[0]+'»',()=>K.fake(100+i),()=>K.open(i))},
 view(){if(G.ph=='roll')return bar('Кейсы')+`<div class=card style="text-align:center"><b>${G.cn}</b><div class=rl2><div id=st2 class=st2 style="animation-duration:${G.dur}ms">${G.tiles.map(K.tile).join('')}</div><div class=ptr></div></div><div class=mu>Открываем…</div></div>`;
 if(G.ph=='res')return bar('Кейсы')+K.res();
@@ -283,6 +286,7 @@ else{if(busy){toast('Дождитесь окончания открытия');re
 SCR.shop=()=>{const n=gems();return`<h2 style="margin-top:6px">Магазин кристаллов</h2><div class=card style="text-align:center"><div class=mu>Баланс кристаллов</div><div class=big>💎 ${n}</div><p class=mu>Считаются все кристаллы из кейсов в вашей коллекции. При покупке сначала списываются самые дешёвые, список показывается до подтверждения.</p></div>
 <h2>Эксклюзивные предметы</h2>${SHOP.map((x,i)=>{const it=ITEMS[x.id],ok=n>=x.c;return`<div class=card style="border-color:${RC[it[2]]}"><div class=rw><div class=ico>${icon(x.id)}</div><div><b>${it[0]}</b><div style="color:${RC[it[2]]};font-size:12px;font-weight:700">${RAR[it[2]]}</div><div class=mu>${it[1]} · в коллекции ×${S.col[x.id]||0}</div></div></div><div class=big style="font-size:22px">💎 ${x.c}</div><button class="btn ${ok?'':'g'}" onclick="shopAsk('i',${i})">${ok?'Купить':'Не хватает '+(x.c-n)+' 💎'}</button></div>`}).join('')}
 <h2>Специальные кейсы</h2>${CS2.map((c,j)=>!c.gem?'':`<div class=ct style="background:linear-gradient(140deg,${c.c1}cc,${c.c2})"><div class=rw><div style="flex:none">${cart(j,0)}</div><div><b style="font-size:19px">${c.n}</b><div style="font-size:15px">Стоимость: <b>💎 ${c.cost}</b></div></div></div><div class=od>${c.o.map(o=>`<div><span>${olb(o)}</span><b>${pc(o.p,c)}%</b></div>`).join('')}</div><button class=btn onclick="shopAsk('c',${j})" style="background:rgba(0,0,0,.45);box-shadow:none;border:1px solid rgba(255,255,255,.4)">${n>=c.cost?'Открыть за 💎 '+c.cost:'Не хватает '+(c.cost-n)+' 💎'}</button></div>`).join('')}`};
+if(S.pend){K.claim();setTimeout(()=>toast('Награда из прерванного открытия начислена'),300)}
 {const _r=render;render=function(){_r();if(game=='cases'&&G.ph=='roll')K.mount()}}
 render();
 </script></body></html>
