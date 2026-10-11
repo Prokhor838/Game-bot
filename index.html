@@ -40,8 +40,11 @@ input.in{width:100%;min-height:54px;border-radius:14px;border:1px solid var(--bd
 .pk b{font-size:24px}.pk span{font-size:30px}.pk.r{color:#dc2626}.pk.dim{opacity:.4}.pk.on{outline:3px solid var(--ac2);transform:translateY(-6px)}
 .tb{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:110px;padding:10px 4px}.pr{position:relative;width:76px;height:98px}.pr .pk{position:absolute;left:0;top:0}.pr .pk+.pk{left:18px;top:14px}
 .gh2{position:fixed;pointer-events:none;z-index:30;display:grid;opacity:.9}.bx.pv{background:rgba(34,211,238,.6)!important}.bx.bad{background:rgba(244,63,94,.45)!important}.pc{touch-action:none;user-select:none}
-@keyframes dr{0%{transform:translateY(-70px) scale(.5) rotate(-25deg);opacity:0}70%{transform:translateY(6px) scale(1.1)}}
-.shk{animation:shk .14s infinite}@keyframes shk{0%{transform:translate(-3px,0) rotate(-2deg)}50%{transform:translate(3px,0) rotate(2deg)}}.bst{animation:bst .6s both}@keyframes bst{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:.85}}
+.rl2{position:relative;overflow:hidden;margin:12px -6px;padding:10px 0;border-radius:14px;background:rgba(0,0,0,.25);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.st2{display:flex;will-change:transform;animation:mb 5.2s ease-out both}@keyframes mb{0%{filter:blur(2.5px)}40%{filter:blur(1.5px)}100%{filter:blur(0)}}
+.ptr{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:#fbbf24;box-shadow:0 0 14px 2px #fbbf24;z-index:2}
+.tl2{flex:none;width:92px;height:116px;margin-right:6px;border-radius:12px;border:2px solid var(--rc);background:rgba(255,255,255,.07);box-shadow:inset 0 -28px 24px -20px var(--rc);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;text-align:center;padding:4px;color:var(--tx)}.tl2 svg{width:50px}.tl2 .em{font-size:36px;line-height:50px}.tl2 span{margin-top:4px;line-height:1.1}
+@keyframes rv{from{transform:scale(.8);opacity:0}}
 .ct{border-radius:20px;padding:14px;margin:12px 0;color:#fff;border:1px solid rgba(255,255,255,.25);box-shadow:var(--sh)}.ct .od{font-size:12px;opacity:.95;margin:8px 0}.ct .od div{display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.12)}
 .rw{display:flex;gap:10px;align-items:center}.ico{width:54px;height:54px;flex:none}
 .it{display:flex;flex-direction:column;align-items:center;text-align:center;border-radius:16px;padding:10px 6px;background:var(--sf);border:2px solid var(--rc);font-size:12px}.it svg{width:52px}
@@ -161,12 +164,25 @@ const pc=p=>p%10?(p/10).toFixed(1):p/10,olb=o=>o.t=='c'?'🪙 '+o.a+'–'+o.b+' 
 function uicon(i){const c=ITEMS[i][4];return`<svg viewBox="0 0 40 40"><defs><radialGradient id="u${i}"><stop offset="0" stop-color="${c}" stop-opacity=".85"/><stop offset="1" stop-color="${c}" stop-opacity=".12"/></radialGradient></defs><circle cx="20" cy="20" r="18" fill="url(#u${i})" stroke="${c}" stroke-width="1.5"/><text x="20" y="27" text-anchor="middle" font-size="19">${ITEMS[i][5]}</text></svg>`}
 const cart=(j,o)=>{const c=CS2[j];return`<svg viewBox="0 0 120 100" style="width:120px;filter:drop-shadow(0 0 14px ${c.c1})"><defs><linearGradient id="cg${j}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs><rect x="14" y="40" width="92" height="52" rx="8" fill="url(#cg${j})" stroke="#fff" stroke-opacity=".5"/>${o?'<ellipse cx="60" cy="40" rx="40" ry="10" fill="#fff" opacity=".75"/>':''}<g transform="${o?'translate(-6,-16) rotate(-14 14 40)':''}"><rect x="10" y="26" width="100" height="18" rx="6" fill="url(#cg${j})" stroke="#fff" stroke-opacity=".6"/></g><rect x="52" y="52" width="16" height="20" rx="3" fill="#fff" opacity=".85"/></svg>`};
 const K={
+tile(t){return`<div class=tl2 style="--rc:${RC[t.r]}">${t.id!=null?icon(t.id):`<div class=em>${t.ic}</div>`}<span>${t.nm}</span></div>`},
+tileOf(rw){return rw.t=='c'?{ic:'🪙',nm:rw.n+' монет',r:rw.r}:rw.t=='k'?{ic:'💎',nm:'+'+rw.n+' кристаллов',r:rw.r}:{id:rw.id,nm:ITEMS[rw.id][0],r:ITEMS[rw.id][2]}},
+fake(j){const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+if(j>=100){const c=CS[j-100];let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),id=p[Math.random()*p.length|0];return{id,nm:ITEMS[id][0],r:q}}
+const c=CS2[j];let r=Math.random()*1000,o=c.o[c.o.length-1],q=0;for(const x of c.o){if(r<q+x.p){o=x;break}q+=x.p}
+return o.t=='c'?{ic:'🪙',nm:ri(o.a,o.b)+' монет',r:o.r}:o.t=='k'?{ic:'💎',nm:'+'+ri(o.a,o.b)+' кристаллов',r:o.r}:{id:o.id,nm:ITEMS[o.id][0],r:ITEMS[o.id][2]}},
+// Рулетка в стиле CS2: награда уже выдана и записана, лента только показывает её (победная плитка строится из фактической награды)
+go(rw,name,fk,again){const win=34+Math.floor(Math.random()*5),tiles=[];for(let i=0;i<44;i++)tiles.push(i==win?K.tileOf(rw):fk());
+const g=G;Object.assign(g,{ph:'roll',tiles,win,jit:Math.random()*50-25,an:0,dur:S.anim?5200:500,cn:name,again,rw});render();
+setTimeout(()=>{busy=false;if(game=='cases'&&G===g){g.ph='res';render()}else toast('Награда: '+K.tileOf(rw).nm)},g.dur+500)},
+mount(){const st=$('#st2');if(!st||G.ph!='roll')return;const box=st.parentElement.clientWidth||320,tx=-(G.win*98+49-box/2+G.jit);
+if(G.an){st.style.animation='none';st.style.transition='none';st.style.transform='translateX('+tx+'px)';return}G.an=1;st.style.transform='translateX(0)';
+requestAnimationFrame(()=>requestAnimationFrame(()=>{st.style.transition='transform '+G.dur+'ms cubic-bezier(.08,.72,.12,1)';st.style.transform='translateX('+tx+'px)'}))},
+res(){const r=G.rw,col=RC[r.r],g=18+r.r*14;let h;
+if(r.t=='c')h=`<div style="font-size:64px">🪙</div><div class=big>+${r.n} монет</div><div class=mu>Количество: ${r.n}</div>`;
+else if(r.t=='k')h=`<div style="font-size:54px">💎</div><div class=big>+${r.n} кристаллов</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">${Object.entries(r.m).map(([id,n])=>`<div style="width:74px;font-size:11px">${icon(id)}${ITEMS[id][0]}<br><b>×${n}</b></div>`).join('')}</div>`;
+else h=`<div style="width:120px;margin:auto">${icon(r.id)}</div><div class=big style="font-size:26px">${ITEMS[r.id][0]}</div><p class=mu>${ITEMS[r.id][1]}</p><div style="font-weight:800;color:#fbbf24">Стоимость: ${ITEMS[r.id][3]} монет</div><div class=mu>Количество: ×1</div>`;
+return`<div class=card style="text-align:center;border:2px solid ${col};box-shadow:0 0 ${g}px ${col},0 0 ${g*3}px ${col}55;animation:rv .7s"><div style="color:${col};font-weight:900;letter-spacing:1px">${RAR[r.r].toUpperCase()}</div>${h}<br><button class=btn onclick="G.again()">Открыть ещё раз</button><br><br><button class="btn g" onclick="G.ph=null;render()">К кейсам</button></div>`},
 v2(){return`<h2>Новые кейсы</h2>`+CS2.map((c,j)=>`<div class=ct style="background:linear-gradient(140deg,${c.c1}cc,${c.c2})"><div class=rw><div style="flex:none">${cart(j,0)}</div><div><b style="font-size:19px">${c.n}</b><div style="font-size:15px">Стоимость: <b>${c.cost}</b> монет</div></div></div><div class=od>${c.o.map(o=>`<div><span>${olb(o)}</span><b>${pc(o.p)}%</b></div>`).join('')}</div><button class=btn ${busy?'disabled':''} onclick="K.open2(${j})" style="background:rgba(0,0,0,.45);box-shadow:none;border:1px solid rgba(255,255,255,.4)">Открыть за ${c.cost}</button></div>`).join('')},
-ar(){return`<div class=card style="text-align:center"><div class="${G.sp2==1?'shk':'bst'}" style="display:inline-block">${cart(G.cj,G.sp2==2)}</div><div class=big style="font-size:20px">${G.sp2==1?'Открываем…':'Награда!'}</div></div>`},
-rwv(){const r=G.rw,col=RC[r.r];let h='';if(r.t=='c')h=`<div class=big style="font-size:46px;margin:6px 0">🪙 +${r.n}</div><div class=mu>Монеты зачислены на баланс</div>`;
-else if(r.t=='k')h=`<div class=big style="font-size:30px">💎 +${r.n} кристаллов</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">${Object.entries(r.m).map(([id,n])=>`<div style="width:64px;text-align:center;font-size:11px">${icon(id)}${ITEMS[id][0]}<br><b>×${n}</b></div>`).join('')}</div>`;
-else h=`<div style="width:110px;margin:auto;animation:dr .8s">${icon(r.id)}</div><div class=big style="font-size:24px">${ITEMS[r.id][0]}</div><p class=mu>${ITEMS[r.id][1]}</p><div class=big style="font-size:20px;color:#fbbf24">Стоимость: ${ITEMS[r.id][3]} монет</div>`;
-return`<div class=card style="text-align:center;border-color:${col}"><div style="color:${col};font-weight:800">${RAR[r.r]}</div>${h}</div>`},
 open2(j){if(busy)return;const c=CS2[j];if(!c||c.o.reduce((a,x)=>a+x.p,0)!==1000){toast('Ошибка таблицы наград');return}if(S.coins<c.cost){toast('Недостаточно монет: нужно '+c.cost);return}
 busy=true;if(!E.spend(c.cost)){busy=false;return}
 const r=Math.random()*1000;let q=0,o=c.o[c.o.length-1];for(const x of c.o){if(r<q+x.p){o=x;break}q+=x.p}
@@ -174,13 +190,15 @@ let rw={t:o.t,r:o.r};
 if(o.t=='c'){rw.n=o.a+Math.floor(Math.random()*(o.b-o.a+1));E.add(rw.n)}
 else if(o.t=='k'){const n=o.a+Math.floor(Math.random()*(o.b-o.a+1)),m={};for(let i=0;i<n;i++){const id=o.pool[Math.random()*o.pool.length|0];m[id]=(m[id]||0)+1;S.col[id]=(S.col[id]||0)+1}rw.m=m;rw.n=n}
 else{S.col[o.id]=(S.col[o.id]||0)+1;rw.id=o.id;rw.r=ITEMS[o.id][2]}
-S.st.cases++;save();rec(0);const g=G;g.res=null;g.rw=null;g.sp2=1;g.cj=j;render();
-setTimeout(()=>{if(G===g){g.sp2=2;if(game=='cases')render()}},900);
-setTimeout(()=>{g.sp2=0;g.rw=rw;busy=false;if(game=='cases')render()},1500)},
-init(){G={res:null,spin:0}},
-open(i){if(busy)return;G.rw=null;const c=CS[i];if(!E.spend(c[1]))return;busy=true;let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),it=p[Math.random()*p.length|0];S.col[it]=(S.col[it]||0)+1;S.st.cases++;save();rec(0);const g=G;g.spin=1;g.res=null;render();
-setTimeout(()=>{g.spin=0;g.res=it;busy=false;if(game=='cases')render()},1300)},
-view(){return bar('Кейсы')+(G.sp2?K.ar():G.rw?K.rwv():'')+(G.spin?`<div class=card style="text-align:center"><div class=ico style="margin:auto;width:90px;height:90px;animation:sp .6s linear infinite">${icon(8)}</div><div class=big style="font-size:22px">Открываем…</div></div>`:G.res!=null?`<div class=card style="text-align:center;border-color:${RC[ITEMS[G.res][2]]}"><div style="width:110px;margin:auto;animation:dr .8s">${icon(G.res)}</div><div class=big style="font-size:24px">${ITEMS[G.res][0]}</div><div style="color:${RC[ITEMS[G.res][2]]};font-weight:800">${RAR[ITEMS[G.res][2]]}</div><p class=mu>${ITEMS[G.res][1]}</p><div class=big style="font-size:20px;color:#fbbf24">Стоимость: ${ITEMS[G.res][3]} монет</div><p class=mu>Монеты за выпадение не начисляются: вывести кристалл можно в «Коллекции»</p></div>`:'')+CS.map((c,i)=>`<div class=card style="background:linear-gradient(135deg,${c[3]}55,${c[4]}55)"><div class=rw><div class=ico style="border-radius:14px;background:linear-gradient(135deg,${c[3]},${c[4]})"></div><div><b>Кейс «${c[0]}»</b><div class=mu>Стоимость: ${c[1]} монет</div></div></div><p class=mu>${RAR.map((r,k)=>`<span style="color:${RC[k]}">●</span> ${r} ${c[2][k]}%`).join('<br>')}</p><button class=btn ${busy?'disabled':''} onclick="K.open(${i})">Открыть за ${c[1]}</button></div>`).join('')+K.v2()}};
+S.st.cases++;save();rec(0);K.go(rw,c.n,()=>K.fake(j),()=>K.open2(j))},
+init(){G={ph:null}},
+open(i){if(busy)return;const c=CS[i];if(!E.spend(c[1]))return;busy=true;let r=Math.random()*100,q=0;for(;q<4;q++)if((r-=c[2][q])<0)break;
+const p=ITEMS.map((x,k)=>k).filter(k=>k<10&&ITEMS[k][2]==q),it=p[Math.random()*p.length|0];S.col[it]=(S.col[it]||0)+1;S.st.cases++;save();rec(0);
+K.go({t:'i',id:it,r:ITEMS[it][2]},'Кейс «'+c[0]+'»',()=>K.fake(100+i),()=>K.open(i))},
+view(){if(G.ph=='roll')return bar('Кейсы')+`<div class=card style="text-align:center"><b>${G.cn}</b><div class=rl2><div id=st2 class=st2 style="animation-duration:${G.dur}ms">${G.tiles.map(K.tile).join('')}</div><div class=ptr></div></div><div class=mu>Открываем…</div></div>`;
+if(G.ph=='res')return bar('Кейсы')+K.res();
+return bar('Кейсы')+CS.map((c,i)=>`<div class=card style="background:linear-gradient(135deg,${c[3]}55,${c[4]}55)"><div class=rw><div class=ico style="border-radius:14px;background:linear-gradient(135deg,${c[3]},${c[4]})"></div><div><b>Кейс «${c[0]}»</b><div class=mu>Стоимость: ${c[1]} монет</div></div></div><p class=mu>${RAR.map((r,k)=>`<span style="color:${RC[k]}">●</span> ${r} ${c[2][k]}%`).join('<br>')}</p><button class=btn ${busy?'disabled':''} onclick="K.open(${i})">Открыть за ${c[1]}</button></div>`).join('')+K.v2()}};
+
 const SH='1|11|111|1111|11/11|111/111/111|1/1|1/1/1|1/1/1/1|11/10|11/01|10/11|01/11|111/100|111/001|111/010'.split('|').map(s=>{const c=[];s.split('/').forEach((r,y)=>[...r].forEach((v,x)=>v=='1'&&c.push([y,x])));return c}),CL=['','#8b5cf6','#06b6d4','#f43f5e','#f59e0b','#10b981'];
 const B={init(){G={g:Array(100).fill(0),p:[],sel:null,sc:0,over:0,np:0};B.fill()},fill(){G.p=[0,1,2].map(()=>({s:SH[Math.random()*SH.length|0],k:1+Math.random()*5|0}))},
 fits(s,r,c){return s.every(([y,x])=>{const Y=r+y,X=c+x;return Y>=0&&X>=0&&Y<10&&X<10&&!G.g[Y*10+X]})},any(s){for(let r=0;r<10;r++)for(let c=0;c<10;c++)if(B.fits(s,r,c))return true;return false},
@@ -238,5 +256,6 @@ SCR.admin=()=>{if(!aOK)return'<p class=mu>Нет доступа</p>';return`<div
 <div class=card><b>Монеты</b><div class=big>${S.coins}</div><input id=ac class=in inputmode=numeric placeholder="Сумма"><div class=chips><button class="chip on" onclick="adC('set')">Установить</button><button class=chip onclick="adC('add')">+ Добавить</button><button class=chip onclick="adC('sub')">− Забрать</button></div></div>
 <div class=card><b>Кристаллы</b>${ITEMS.map((x,i)=>`<div class=sw><span style="color:${RC[x[2]]}">${x[0]}<br><span class=mu>${RAR[x[2]]} · ×${S.col[i]||0}</span></span><span style="display:flex;gap:6px"><button class=chip style="width:44px" onclick="adK(${i},-1)">−</button><button class=chip style="width:44px" onclick="adK(${i},1)">+</button><button class=chip style="width:56px" onclick="adK(${i},10)">+10</button></span></div>`).join('')}
 <p class=mu style="margin-top:12px">Задать точное количество:</p><select id=as class=in style="font-size:16px;min-height:44px">${ITEMS.map((x,i)=>`<option value=${i}>${x[0]} (${RAR[x[2]]})</option>`).join('')}</select><input id=ak class=in inputmode=numeric placeholder="Количество"><button class=btn onclick="adS()">Задать</button></div>`};
+{const _r=render;render=function(){_r();if(game=='cases'&&G.ph=='roll')K.mount()}}
 render();
 </script></body></html>
