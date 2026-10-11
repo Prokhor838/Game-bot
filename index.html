@@ -184,9 +184,30 @@ const items=k=>`<div class=it onclick="sellAsk(${k})" style="--rc:${RC[ITEMS[k][
 function sellAsk(k){if(!S.col[k])return;const it=ITEMS[k];modal(`<div style="width:90px;margin:auto">${icon(k)}</div><h3 style="text-align:center">${it[0]}</h3><p class=mu style="text-align:center">${RAR[it[2]]} · у вас ×${S.col[k]}<br>${it[1]}</p><div class=big style="font-size:22px;color:#fbbf24">Стоимость: ${it[3]} монет</div><button class=btn onclick="sellDo(${k})">Вывести 1 шт. за ${it[3]}</button><br><br><button class="btn g" onclick="modal()">Отмена</button>`)}
 function sellDo(k){if(!S.col[k]){modal();return}const v=ITEMS[k][3];S.col[k]--;if(!S.col[k])delete S.col[k];E.add(v);modal();toast('+'+v+' монет');render()}
 function rulesAll(){modal('<h3>Правила игр</h3>'+GM.map(g=>`<p><b>${g[1]}</b><br><span class=mu>${g[7]}</span></p>`).join('')+'<button class=btn onclick=modal()>Закрыть</button>')}
-function reset(){const t=S.theme;S=JSON.parse(JSON.stringify(D));S.theme=t;save();modal();toast('Прогресс сброшен');render()}
+function reset(){try{localStorage.removeItem('gb2a')}catch(e){}aOK=false;const t=S.theme;S=JSON.parse(JSON.stringify(D));S.theme=t;save();modal();toast('Прогресс сброшен');render()}
 function render(){document.documentElement.dataset.theme=S.theme;document.body.classList.toggle('na',!S.anim);
 const h=game?gm(game)[3].view():SCR[tab]();
-$('#app').innerHTML=`<div class=top><div class=logo>GAME BOT 2.0</div><div class=av>${NAME[0]}</div><div class=bal>🪙 ${S.coins}</div><button class=ib onclick="game=null;tab='set';render()">⚙</button></div><main class=sc>${h}</main><nav class=nav>${[['home','⌂','Главная'],['games','🎮','Игры'],['col','◈','Коллекция'],['prof','☺','Профиль']].map(n=>`<button class="${!game&&tab==n[0]?'on':''}" onclick="tok++;game=null;tab='${n[0]}';render()"><i>${n[1]}</i>${n[2]}</button>`).join('')}</nav>`}
+$('#app').innerHTML=`<div class=top><div class=logo onclick="adminTap()">GAME BOT 2.0</div><div class=av>${NAME[0]}</div><div class=bal>🪙 ${S.coins}</div><button class=ib onclick="game=null;tab='set';render()">⚙</button></div><main class=sc>${h}</main><nav class=nav>${[['home','⌂','Главная'],['games','🎮','Игры'],['col','◈','Коллекция'],['prof','☺','Профиль']].map(n=>`<button class="${!game&&tab==n[0]?'on':''}" onclick="tok++;game=null;tab='${n[0]}';render()"><i>${n[1]}</i>${n[2]}</button>`).join('')}</nav>`}
+// ---------- Скрытая локальная админ-панель (только этот профиль на этом устройстве) ----------
+const ADMIN_TG_IDS=[]; // Вставьте свой числовой Telegram ID, например [123456789]. Пусто = проверка ID выключена.
+let aT=0,aC=0,aOK=false,aFail=0,aLock=0;
+const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const hex=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+function adminTap(){const n=Date.now();aC=n-aT>2000?1:aC+1;aT=n;if(aC>=7){aC=0;adminOpen()}}
+function adminOpen(){if(ADMIN_TG_IDS.length&&!(TU&&ADMIN_TG_IDS.includes(TU.id)))return;if(!(window.crypto&&crypto.subtle)){toast('Нужен HTTPS');return}
+if(aOK){tab='admin';game=null;render();return}if(Date.now()<aLock){toast('Подождите минуту');return}const has=lsg('gb2a');
+modal(`<h3>${has?'Вход в админ-панель':'Создайте PIN (4–8 цифр)'}</h3><input id=ap class=in type=password inputmode=numeric maxlength=8 placeholder="PIN">${has?'':'<input id=ap2 class=in type=password inputmode=numeric maxlength=8 placeholder="Повторите PIN">'}<button class=btn onclick="adminPin()">OK</button><br><br><button class="btn g" onclick="modal()">Отмена</button>`)}
+async function adminPin(){const p=$('#ap').value,has=lsg('gb2a');if(Date.now()<aLock){toast('Подождите минуту');return}if(!/^\d{4,8}$/.test(p)){toast('PIN: 4–8 цифр');return}
+if(!has){if(p!==$('#ap2').value){toast('PIN не совпадает');return}try{localStorage.setItem('gb2a',await hex('gb2|'+p))}catch(e){toast('Не удалось сохранить PIN');return}aOK=true;modal();tab='admin';game=null;render();return}
+if(await hex('gb2|'+p)===has){aOK=true;aFail=0;modal();tab='admin';game=null;render()}else{aFail++;if(aFail>=5){aFail=0;aLock=Date.now()+60000;modal();toast('Слишком много попыток: подождите минуту')}else toast('Неверный PIN')}}
+function adC(op){if(!aOK)return;const v=Number($('#ac').value);if(!Number.isInteger(v)||v<0||v>1e9){toast('Введите целое число от 0 до 1 000 000 000');return}
+const r=op=='set'?v:op=='add'?S.coins+v:S.coins-v;if(r<0){toast('Баланс не может быть отрицательным');return}if(r>1e9){toast('Слишком большой баланс');return}S.coins=r;save();toast('Баланс: '+r);render()}
+function adK(i,d){if(!aOK)return;const q=(S.col[i]||0)+d;if(q<0){toast('Нечего забирать');return}adQ(i,Math.min(q,9999))}
+function adQ(i,q){if(q<=0)delete S.col[i];else S.col[i]=q;save();render()}
+function adS(){if(!aOK)return;const q=Number($('#ak').value);if(!Number.isInteger(q)||q<0||q>9999){toast('Введите целое число от 0 до 9999');return}adQ(+$('#as').value,q);toast('Количество задано')}
+SCR.admin=()=>{if(!aOK)return'<p class=mu>Нет доступа</p>';return`<div class=gh><button class=bk onclick="aOK=false;tab='set';render()">‹ Выйти</button><b>Админ-панель</b><span style=width:40px></span></div><p class=mu>Меняет только локальный профиль на этом устройстве.</p>
+<div class=card><b>Монеты</b><div class=big>${S.coins}</div><input id=ac class=in inputmode=numeric placeholder="Сумма"><div class=chips><button class="chip on" onclick="adC('set')">Установить</button><button class=chip onclick="adC('add')">+ Добавить</button><button class=chip onclick="adC('sub')">− Забрать</button></div></div>
+<div class=card><b>Кристаллы</b>${ITEMS.map((x,i)=>`<div class=sw><span style="color:${RC[x[2]]}">${x[0]}<br><span class=mu>${RAR[x[2]]} · ×${S.col[i]||0}</span></span><span style="display:flex;gap:6px"><button class=chip style="width:44px" onclick="adK(${i},-1)">−</button><button class=chip style="width:44px" onclick="adK(${i},1)">+</button><button class=chip style="width:56px" onclick="adK(${i},10)">+10</button></span></div>`).join('')}
+<p class=mu style="margin-top:12px">Задать точное количество:</p><select id=as class=in style="font-size:16px;min-height:44px">${ITEMS.map((x,i)=>`<option value=${i}>${x[0]} (${RAR[x[2]]})</option>`).join('')}</select><input id=ak class=in inputmode=numeric placeholder="Количество"><button class=btn onclick="adS()">Задать</button></div>`};
 render();
 </script></body></html>
